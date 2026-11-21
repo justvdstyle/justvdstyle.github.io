@@ -14,6 +14,9 @@
     --contact-w: min(80vw, 440px);
     --shift: min(calc(var(--contact-w) / 2 + 28px), 36vw);
     --rest: .22;
+    /* Where the logo splits: the middle of the top line shared by V and D. */
+    --split: 57.2%;
+    --off: calc(var(--logo-w) * .072);
     --ease-out: cubic-bezier(.16, 1, .3, 1);
     --ease-door: cubic-bezier(.72, 0, .18, 1);
   }
@@ -27,15 +30,15 @@
   .logo { grid-area: 1 / 1; position: relative; width: var(--logo-w); aspect-ratio: 3608 / 2048; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .half { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform, opacity; }
   .half svg { display: block; width: 100%; height: 100%; overflow: visible; }
-  .half.left  { clip-path: inset(-2% 50% -2% -2%); transform-origin: 0% 50%; }
-  .half.right { clip-path: inset(-2% -2% -2% 50%); transform-origin: 100% 50%; }
+  .half.left  { clip-path: inset(-2% calc(100% - var(--split)) -2% -2%); transform-origin: 0% 50%; }
+  .half.right { clip-path: inset(-2% -2% -2% var(--split)); transform-origin: 100% 50%; }
 
   .fill { fill: #fff; opacity: 0; }
   .outline path { fill: none; stroke: #fff; stroke-width: 1.3; vector-effect: non-scaling-stroke;
                    stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
 
   /* Light seam where the logo splits, and the glow that opens with it. */
-  .seam { position: absolute; left: 50%; top: -8%; bottom: -8%; width: 2px; margin-left: -1px;
+  .seam { position: absolute; left: var(--split); top: -8%; bottom: -8%; width: 2px; margin-left: -1px;
            background: linear-gradient(transparent, #fff 18%, #fff 82%, transparent);
            box-shadow: 0 0 14px 3px rgba(255,255,255,.75), 0 0 70px 18px rgba(255,214,150,.28);
            transform: scaleY(0); opacity: 0; pointer-events: none; }
@@ -60,7 +63,7 @@
   /* Timeline (runs on load; tapping the logo plays it again). */
   .play .outline path { animation: draw 2.1s var(--ease-door) .25s forwards, fadeOut .7s ease 2.35s forwards; }
   .play .fill { animation: fadeIn .9s ease 1.75s forwards; }
-  .play .seam { animation: seam 2.2s ease 2.75s forwards; }
+  .play .seam { animation: seam 1.5s ease 2.75s forwards; }
   .play .glow { animation: glow 2.6s var(--ease-out) 3.15s forwards; }
   .play .left  { animation: openLeft 1.7s var(--ease-door) 3.2s forwards; }
   .play .right { animation: openRight 1.7s var(--ease-door) 3.2s forwards; }
@@ -76,9 +79,10 @@
   @keyframes fadeOut { to { opacity: 0; } }
   @keyframes seam {
     0%   { transform: scaleY(0); opacity: 0; }
-    22%  { transform: scaleY(1); opacity: 1; }
-    40%  { transform: scaleY(1) scaleX(1.6); opacity: 1; }
-    100% { transform: scaleY(1.1) scaleX(14); opacity: 0; }
+    25%  { transform: scaleY(1); opacity: 1; }
+    45%  { transform: scaleY(1) scaleX(1.6); opacity: 1; }
+    75%  { transform: scaleY(1.05) scaleX(5); opacity: 0; }
+    100% { transform: scaleY(1.05) scaleX(5); opacity: 0; }
   }
   @keyframes glow {
     0%   { transform: scaleX(.02); opacity: 0; }
@@ -87,11 +91,11 @@
   }
   @keyframes openLeft {
     0%   { transform: translateX(0) rotateY(0); opacity: 1; }
-    100% { transform: translateX(calc(-1 * var(--shift))) rotateY(24deg); opacity: var(--rest); }
+    100% { transform: translateX(calc(-1 * (var(--shift) + var(--off)))) rotateY(24deg); opacity: var(--rest); }
   }
   @keyframes openRight {
     0%   { transform: translateX(0) rotateY(0); opacity: 1; }
-    100% { transform: translateX(var(--shift)) rotateY(-24deg); opacity: var(--rest); }
+    100% { transform: translateX(calc(var(--shift) - var(--off))) rotateY(-24deg); opacity: var(--rest); }
   }
   @keyframes rise { to { opacity: 1; transform: none; } }
 
